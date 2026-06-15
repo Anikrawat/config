@@ -1,0 +1,41 @@
+return {
+	"nvim-tree/nvim-tree.lua",
+	version = "*",
+	lazy = false,
+	dependencies = {
+		"nvim-tree/nvim-web-devicons",
+	},
+	config = function()
+		local function my_on_attach(bufnr)
+			local api = require("nvim-tree.api")
+
+			local function opts(desc)
+				return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+			end
+
+			-- Apply default mappings
+			api.config.mappings.default_on_attach(bufnr)
+
+			-- CUSTOM MAPPINGS
+			vim.keymap.set("n", "l", api.node.open.edit, opts("Open"))
+			vim.keymap.set("n", "h", api.node.navigate.parent_close, opts("Close Directory"))
+			vim.keymap.set("n", "v", api.node.open.vertical, opts("Open: Vertical Split"))
+			vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
+		end
+
+		require("nvim-tree").setup({
+			on_attach = my_on_attach, -- Don't forget to add this line!
+			update_focused_file = { enable = true },
+			renderer = {
+				highlight_git = true,
+				highlight_opened_files = "none", -- "all", "icon" or "name" can add solid bg colors
+				root_folder_label = false,
+				-- ... rest of your renderer config
+			},
+		})
+	end,
+	keys = {
+		{ "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Toggle File Explorer" },
+		{ "<leader>r", "<cmd>NvimTreeRefresh<cr>", desc = "Refresh File Explorer" },
+	},
+}
